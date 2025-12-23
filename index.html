@@ -473,19 +473,21 @@
             });
         }
 
-        // Initialize
-        bookingData = parseBookingData();
-        if (bookingData) {
-            displayBookingData(bookingData);
-        }
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            bookingData = parseBookingData();
+            if (bookingData) {
+                displayBookingData(bookingData);
+            }
 
-        // Button listeners
-        document.getElementById('confirmBtn').addEventListener('click', () => {
-            sendConfirmation('confirmed');
-        });
+            // Button listeners
+            document.getElementById('confirmBtn').addEventListener('click', () => {
+                sendConfirmation('confirmed');
+            });
 
-        document.getElementById('cancelBtn').addEventListener('click', () => {
-            sendConfirmation('cancelled');
+            document.getElementById('cancelBtn').addEventListener('click', () => {
+                sendConfirmation('cancelled');
+            });
         });
     </script>
 </body>
