@@ -181,23 +181,23 @@
         <div class="info-box">
             <div class="info-row">
                 <div class="info-label">Name</div>
-                <div class="info-value" id="customerName">Loading...</div>
+                <div class="info-value" id="customerName">Guest</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Phone Number</div>
-                <div class="info-value" id="phoneNumber">Loading...</div>
+                <div class="info-value" id="phoneNumber">N/A</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Pickup Location</div>
-                <div class="info-value location" id="pickupLocation">Loading...</div>
+                <div class="info-value location" id="pickupLocation">N/A</div>
             </div>
         </div>
 
         <div class="buttons">
-            <button class="btn-confirm" id="confirmBtn" onclick="confirmBooking()">
+            <button class="btn-confirm" id="confirmBtn">
                 ✓ Confirm
             </button>
-            <button class="btn-cancel" id="cancelBtn" onclick="cancelBooking()">
+            <button class="btn-cancel" id="cancelBtn">
                 ✗ Cancel
             </button>
         </div>
@@ -220,97 +220,99 @@
     </div>
 
     <script>
-        // Get URL parameters
+        // Get URL parameters and display immediately
         const urlParams = new URLSearchParams(window.location.search);
         const name = urlParams.get('name') || 'Guest';
         const phone = urlParams.get('phone') || 'N/A';
         const location = urlParams.get('location') || 'N/A';
         
-        // Your n8n webhook URL - REPLACE THIS WITH YOUR ACTUAL WEBHOOK URL LATER
+        // Display booking details immediately
+        document.getElementById('customerName').textContent = decodeURIComponent(name);
+        document.getElementById('phoneNumber').textContent = decodeURIComponent(phone);
+        document.getElementById('pickupLocation').textContent = decodeURIComponent(location);
+
+        // Your n8n webhook URL - Add your webhook URL here when ready
         const N8N_WEBHOOK_URL = '';
 
-        // Display booking details immediately
-        window.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('customerName').textContent = decodeURIComponent(name);
-            document.getElementById('phoneNumber').textContent = decodeURIComponent(phone);
-            document.getElementById('pickupLocation').textContent = decodeURIComponent(location);
+        // Button event listeners
+        document.getElementById('confirmBtn').addEventListener('click', function() {
+            sendConfirmation('confirmed');
         });
 
-        async function confirmBooking() {
-            await sendConfirmation('confirmed');
-        }
+        document.getElementById('cancelBtn').addEventListener('click', function() {
+            sendConfirmation('cancelled');
+        });
 
-        async function cancelBooking() {
-            await sendConfirmation('cancelled');
-        }
-
-        async function sendConfirmation(status) {
+        function sendConfirmation(status) {
             const confirmBtn = document.getElementById('confirmBtn');
             const cancelBtn = document.getElementById('cancelBtn');
             const loading = document.getElementById('loading');
             const successMessage = document.getElementById('successMessage');
             const errorMessage = document.getElementById('errorMessage');
 
-            // Disable buttons and show loading
+            // Disable buttons
             confirmBtn.disabled = true;
             cancelBtn.disabled = true;
-            loading.style.display = 'block';
             successMessage.style.display = 'none';
             errorMessage.style.display = 'none';
 
-            try {
-                // If no webhook URL configured, just show success message
-                if (!N8N_WEBHOOK_URL || N8N_WEBHOOK_URL === '') {
-                    loading.style.display = 'none';
+            // If no webhook configured, just show success message
+            if (!N8N_WEBHOOK_URL || N8N_WEBHOOK_URL === '') {
+                setTimeout(function() {
                     if (status === 'confirmed') {
                         successMessage.textContent = '✓ Booking confirmed! Your taxi will arrive shortly.';
-                        successMessage.style.display = 'block';
+                        successMessage.style.backgroundColor = '#d1fae5';
+                        successMessage.style.color = '#065f46';
                     } else {
                         successMessage.textContent = '✓ Booking cancelled successfully.';
                         successMessage.style.backgroundColor = '#fee2e2';
                         successMessage.style.color = '#991b1b';
-                        successMessage.style.display = 'block';
                     }
-                    return;
-                }
+                    successMessage.style.display = 'block';
+                }, 500);
+                return;
+            }
 
-                // Send confirmation to n8n webhook
-                const response = await fetch(N8N_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        status: status,
-                        name: decodeURIComponent(name),
-                        phone: decodeURIComponent(phone),
-                        location: decodeURIComponent(location),
-                        timestamp: new Date().toISOString()
-                    })
-                });
+            // Show loading
+            loading.style.display = 'block';
 
+            // Send to webhook
+            fetch(N8N_WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: status,
+                    name: decodeURIComponent(name),
+                    phone: decodeURIComponent(phone),
+                    location: decodeURIComponent(location),
+                    timestamp: new Date().toISOString()
+                })
+            })
+            .then(function(response) {
                 loading.style.display = 'none';
-
                 if (response.ok) {
                     if (status === 'confirmed') {
                         successMessage.textContent = '✓ Booking confirmed! Your taxi will arrive shortly.';
-                        successMessage.style.display = 'block';
+                        successMessage.style.backgroundColor = '#d1fae5';
+                        successMessage.style.color = '#065f46';
                     } else {
                         successMessage.textContent = '✓ Booking cancelled successfully.';
                         successMessage.style.backgroundColor = '#fee2e2';
                         successMessage.style.color = '#991b1b';
-                        successMessage.style.display = 'block';
                     }
+                    successMessage.style.display = 'block';
                 } else {
-                    throw new Error('Failed to send confirmation');
+                    throw new Error('Failed');
                 }
-            } catch (error) {
+            })
+            .catch(function(error) {
                 loading.style.display = 'none';
                 errorMessage.style.display = 'block';
                 confirmBtn.disabled = false;
                 cancelBtn.disabled = false;
-                console.error('Error:', error);
-            }
+            });
         }
     </script>
 </body>
