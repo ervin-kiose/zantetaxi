@@ -226,13 +226,15 @@
         const phone = urlParams.get('phone') || 'N/A';
         const location = urlParams.get('location') || 'N/A';
         
-        // Your n8n webhook URL - REPLACE THIS WITH YOUR ACTUAL WEBHOOK URL
-        const N8N_WEBHOOK_URL = 'https://primary-production-d90f.up.railway.app/webhook-test/on-received';
+        // Your n8n webhook URL - REPLACE THIS WITH YOUR ACTUAL WEBHOOK URL LATER
+        const N8N_WEBHOOK_URL = '';
 
-        // Display booking details
-        document.getElementById('first_name').textContent = decodeURIComponent(name);
-        document.getElementById('phone_number').textContent = decodeURIComponent(phone);
-        document.getElementById('pickup_location').textContent = decodeURIComponent(location);
+        // Display booking details immediately
+        window.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('customerName').textContent = decodeURIComponent(name);
+            document.getElementById('phoneNumber').textContent = decodeURIComponent(phone);
+            document.getElementById('pickupLocation').textContent = decodeURIComponent(location);
+        });
 
         async function confirmBooking() {
             await sendConfirmation('confirmed');
@@ -257,6 +259,21 @@
             errorMessage.style.display = 'none';
 
             try {
+                // If no webhook URL configured, just show success message
+                if (!N8N_WEBHOOK_URL || N8N_WEBHOOK_URL === '') {
+                    loading.style.display = 'none';
+                    if (status === 'confirmed') {
+                        successMessage.textContent = '✓ Booking confirmed! Your taxi will arrive shortly.';
+                        successMessage.style.display = 'block';
+                    } else {
+                        successMessage.textContent = '✓ Booking cancelled successfully.';
+                        successMessage.style.backgroundColor = '#fee2e2';
+                        successMessage.style.color = '#991b1b';
+                        successMessage.style.display = 'block';
+                    }
+                    return;
+                }
+
                 // Send confirmation to n8n webhook
                 const response = await fetch(N8N_WEBHOOK_URL, {
                     method: 'POST',
