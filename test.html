@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="el">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirm Your Pickup Location</title>
+    <title>Επιβεβαίωση Κράτησης Ταξί</title>
     <style>
         * {
             margin: 0;
@@ -27,368 +27,438 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             max-width: 500px;
             width: 100%;
-            padding: 40px;
+            padding: 40px 30px;
+        }
+
+        .header {
             text-align: center;
-        }
-
-        .icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 16px;
             margin-bottom: 30px;
         }
 
-        .info-box {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: left;
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
         }
 
-        .info-row {
+        .taxi-icon {
+            font-size: 50px;
             margin-bottom: 15px;
         }
 
-        .info-row:last-child {
+        .booking-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .detail-row {
+            margin-bottom: 15px;
+        }
+
+        .detail-row:last-child {
             margin-bottom: 0;
         }
 
-        .info-label {
-            color: #888;
-            font-size: 12px;
+        .detail-label {
+            color: #666;
+            font-size: 13px;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 5px;
         }
 
-        .info-value {
+        .detail-value {
             color: #333;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .location {
-            color: #667eea;
-            font-size: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
         }
 
         .editable-section {
-            background: #fff3cd;
-            border: 2px dashed #ffc107;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: left;
+            margin-top: 25px;
         }
 
-        .edit-label {
-            color: #856404;
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #555;
             font-size: 14px;
             font-weight: 600;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 8px;
         }
 
-        textarea {
+        input, textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
-            font-size: 16px;
-            font-family: inherit;
-            margin-bottom: 10px;
+            font-size: 15px;
             transition: border-color 0.3s;
-            resize: vertical;
-            min-height: 60px;
+            font-family: inherit;
         }
 
-        textarea:focus {
+        input:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
         }
 
-        .edit-hint {
-            color: #856404;
-            font-size: 12px;
-            margin-top: 5px;
+        textarea {
+            resize: vertical;
+            min-height: 80px;
         }
 
-        .buttons {
+        .button-group {
             display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-top: 30px;
         }
 
         button {
             flex: 1;
-            padding: 16px;
+            padding: 15px;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .btn-confirm {
-            background: #10b981;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
-        .btn-confirm:hover:not(:disabled) {
-            background: #059669;
+        .btn-confirm:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-cancel {
-            background: #ef4444;
+        .btn-decline {
+            background: #f44336;
             color: white;
         }
 
-        .btn-cancel:hover:not(:disabled) {
-            background: #dc2626;
+        .btn-decline:hover {
+            background: #d32f2f;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+            box-shadow: 0 10px 25px rgba(244, 67, 54, 0.4);
         }
 
         button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none !important;
         }
 
-        .message {
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
             display: none;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 20px;
-            font-size: 16px;
         }
 
-        .success-message {
-            background: #d1fae5;
-            color: #065f46;
+        .status-message.success {
+            background: #4caf50;
+            color: white;
         }
 
-        .error-message {
-            background: #fee2e2;
-            color: #991b1b;
+        .status-message.error {
+            background: #f44336;
+            color: white;
         }
 
-        .loading {
-            display: none;
-            margin-top: 20px;
+        .status-message.info {
+            background: #2196f3;
+            color: white;
         }
 
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
+        .edit-toggle {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .footer {
-            margin-top: 20px;
-            color: #999;
+        .edit-toggle button {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 20px;
             font-size: 14px;
         }
 
-        .debug {
-            background: #f0f0f0;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            font-size: 12px;
-            text-align: left;
+        .edit-toggle button:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="icon">🚕</div>
-        <h1>Confirm Your Pickup</h1>
-        <p class="subtitle">Please verify and confirm your taxi booking</p>
-
-        <div class="info-box">
-            <div class="info-row">
-                <div class="info-label">Name</div>
-                <div class="info-value" id="customerName">Loading...</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">Phone Number</div>
-                <div class="info-value" id="phoneNumber">Loading...</div>
-            </div>
+        <div class="header">
+            <div class="taxi-icon">🚕</div>
+            <h1>Επιβεβαίωση Κράτησης</h1>
         </div>
 
-        <div class="editable-section">
-            <div class="edit-label">
-                <span>📍</span>
-                <span>Pickup Location</span>
+        <div class="booking-details" id="viewMode">
+            <div class="detail-row">
+                <div class="detail-label">Αριθμός Κράτησης</div>
+                <div class="detail-value" id="displayBookingId">-</div>
             </div>
-            <textarea id="pickupLocation" placeholder="Enter pickup location...">Loading...</textarea>
-            <div class="edit-hint">✏️ You can edit the location if it's incorrect</div>
-        </div>
-
-        <div class="info-box">
-            <div class="info-row">
-                <div class="info-label">Dropoff Location</div>
-                <div class="info-value location" id="dropoffLocation">Loading...</div>
+            <div class="detail-row">
+                <div class="detail-label">Όνομα</div>
+                <div class="detail-value" id="displayName">-</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Τηλέφωνο</div>
+                <div class="detail-value" id="displayPhone">-</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Σημείο Παραλαβής</div>
+                <div class="detail-value" id="displayPickup">-</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Προορισμός</div>
+                <div class="detail-value" id="displayDropoff">-</div>
             </div>
         </div>
 
-        <div class="debug" id="debug"></div>
-
-        <div class="buttons">
-            <button class="btn-confirm" id="confirmBtn">
-                ✓ Confirm Booking
-            </button>
-            <button class="btn-cancel" id="cancelBtn">
-                ✗ Cancel
-            </button>
+        <div class="edit-toggle">
+            <button onclick="toggleEditMode()">✏️ Επεξεργασία Στοιχείων</button>
         </div>
 
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
+        <div class="editable-section hidden" id="editMode">
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label for="firstName">Όνομα *</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Επώνυμο *</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Τηλέφωνο *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="pickup">Σημείο Παραλαβής *</label>
+                    <textarea id="pickup" name="pickup" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="dropoff">Προορισμός *</label>
+                    <textarea id="dropoff" name="dropoff" required></textarea>
+                </div>
+            </form>
         </div>
 
-        <div class="message success-message" id="successMessage"></div>
-        <div class="message error-message" id="errorMessage"></div>
-
-        <div class="footer">
-            Need help? Contact our support team
+        <div class="button-group">
+            <button class="btn-confirm" onclick="confirmBooking()">✓ Επιβεβαίωση</button>
+            <button class="btn-decline" onclick="declineBooking()">✗ Ακύρωση</button>
         </div>
+
+        <div class="status-message" id="statusMessage"></div>
     </div>
 
     <script>
-        // Your n8n webhook URL
+        // Your n8n webhook URL - UPDATE THIS
         const N8N_WEBHOOK_URL = '';
 
-        // Get URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        
-        // Debug: show all parameters
-        const debugDiv = document.getElementById('debug');
-        let debugInfo = 'URL Parameters received:<br>';
-        urlParams.forEach((value, key) => {
-            debugInfo += `${key}: ${value}<br>`;
-        });
-        debugDiv.innerHTML = debugInfo;
+        let bookingData = {};
+        let isEditMode = false;
 
-        // Get parameters
-        const firstName = urlParams.get('firstName') || urlParams.get('firstname') || 'N/A';
-        const lastName = urlParams.get('lastName') || urlParams.get('lastname') || '';
-        const phone = urlParams.get('phone') || 'N/A';
-        const pickup = urlParams.get('pickup') || urlParams.get('pickupLocation') || 'N/A';
-        const dropoff = urlParams.get('dropoff') || urlParams.get('dropoffLocation') || 'N/A';
-        const bookingId = urlParams.get('id') || 'N/A';
+        // Parse URL parameters
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                bookingId: params.get('id') || '',
+                firstName: decodeURIComponent(params.get('firstName') || ''),
+                lastName: decodeURIComponent(params.get('lastName') || ''),
+                phone: params.get('phone') || '',
+                pickup: decodeURIComponent(params.get('pickup') || ''),
+                dropoff: decodeURIComponent(params.get('dropoff') || '')
+            };
+        }
 
-        // Display data immediately
-        document.getElementById('customerName').textContent = `${firstName} ${lastName}`;
-        document.getElementById('phoneNumber').textContent = phone;
-        document.getElementById('pickupLocation').value = pickup;
-        document.getElementById('dropoffLocation').textContent = dropoff;
+        // Initialize the page
+        function init() {
+            bookingData = getUrlParams();
+            displayBookingDetails();
+            populateEditForm();
+        }
 
-        // Confirm button
-        document.getElementById('confirmBtn').addEventListener('click', function() {
-            sendConfirmation('confirmed');
-        });
+        // Display booking details
+        function displayBookingDetails() {
+            document.getElementById('displayBookingId').textContent = bookingData.bookingId;
+            document.getElementById('displayName').textContent = 
+                `${bookingData.firstName} ${bookingData.lastName}`;
+            document.getElementById('displayPhone').textContent = bookingData.phone;
+            document.getElementById('displayPickup').textContent = bookingData.pickup;
+            document.getElementById('displayDropoff').textContent = bookingData.dropoff;
+        }
 
-        // Cancel button
-        document.getElementById('cancelBtn').addEventListener('click', function() {
-            sendConfirmation('cancelled');
-        });
+        // Populate edit form
+        function populateEditForm() {
+            document.getElementById('firstName').value = bookingData.firstName;
+            document.getElementById('lastName').value = bookingData.lastName;
+            document.getElementById('phone').value = bookingData.phone;
+            document.getElementById('pickup').value = bookingData.pickup;
+            document.getElementById('dropoff').value = bookingData.dropoff;
+        }
 
-        function sendConfirmation(status) {
-            const confirmBtn = document.getElementById('confirmBtn');
-            const cancelBtn = document.getElementById('cancelBtn');
-            const loading = document.getElementById('loading');
-            const successMessage = document.getElementById('successMessage');
-            const errorMessage = document.getElementById('errorMessage');
+        // Toggle edit mode
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const editSection = document.getElementById('editMode');
+            const viewSection = document.getElementById('viewMode');
+            
+            if (isEditMode) {
+                editSection.classList.remove('hidden');
+                viewSection.classList.add('hidden');
+            } else {
+                editSection.classList.add('hidden');
+                viewSection.classList.remove('hidden');
+                updateBookingDataFromForm();
+                displayBookingDetails();
+            }
+        }
 
-            // Get current pickup (might be edited)
-            const currentPickup = document.getElementById('pickupLocation').value;
+        // Update booking data from form
+        function updateBookingDataFromForm() {
+            bookingData.firstName = document.getElementById('firstName').value;
+            bookingData.lastName = document.getElementById('lastName').value;
+            bookingData.phone = document.getElementById('phone').value;
+            bookingData.pickup = document.getElementById('pickup').value;
+            bookingData.dropoff = document.getElementById('dropoff').value;
+        }
 
-            // Disable buttons
-            confirmBtn.disabled = true;
-            cancelBtn.disabled = true;
-            successMessage.style.display = 'none';
-            errorMessage.style.display = 'none';
+        // Show status message
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message ${type}`;
+            statusEl.style.display = 'block';
+        }
 
-            // If no webhook, just show success
-            if (!N8N_WEBHOOK_URL || N8N_WEBHOOK_URL === '') {
-                setTimeout(() => {
-                    if (status === 'confirmed') {
-                        successMessage.textContent = '✓ Booking confirmed! Your taxi will arrive shortly.';
-                    } else {
-                        successMessage.textContent = '✓ Booking cancelled successfully.';
-                    }
-                    successMessage.style.display = 'block';
-                }, 500);
+        // Disable buttons
+        function disableButtons(disabled) {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = disabled);
+        }
+
+        // Confirm booking
+        async function confirmBooking() {
+            // Update data if in edit mode
+            if (isEditMode) {
+                const form = document.getElementById('bookingForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+                updateBookingDataFromForm();
+            }
+
+            disableButtons(true);
+            showStatus('Επεξεργασία...', 'info');
+
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'confirm',
+                        ...bookingData
+                    })
+                });
+
+                if (response.ok) {
+                    showStatus('✓ Η κράτησή σας επιβεβαιώθηκε! Θα σας ενημερώσουμε σύντομα.', 'success');
+                    setTimeout(() => {
+                        // Optionally redirect to success page
+                        // window.location.href = '/success.html';
+                    }, 2000);
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('✗ Σφάλμα επικοινωνίας. Παρακαλώ προσπαθήστε ξανά.', 'error');
+                disableButtons(false);
+            }
+        }
+
+        // Decline booking
+        async function declineBooking() {
+            if (!confirm('Είστε σίγουροι ότι θέλετε να ακυρώσετε την κράτηση;')) {
                 return;
             }
 
-            // Show loading
-            loading.style.display = 'block';
+            disableButtons(true);
+            showStatus('Ακύρωση...', 'info');
 
-            // Send to webhook
-            fetch(N8N_WEBHOOK_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    status: status,
-                    bookingId: bookingId,
-                    firstName: firstName,
-                    lastName: lastName,
-                    phone: phone,
-                    pickupLocation: currentPickup,
-                    dropoffLocation: dropoff,
-                    timestamp: new Date().toISOString()
-                })
-            })
-            .then(response => {
-                loading.style.display = 'none';
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'decline',
+                        bookingId: bookingData.bookingId,
+                        phone: bookingData.phone
+                    })
+                });
+
                 if (response.ok) {
-                    if (status === 'confirmed') {
-                        successMessage.textContent = '✓ Booking confirmed! Your taxi will arrive shortly.';
-                    } else {
-                        successMessage.textContent = '✓ Booking cancelled successfully.';
-                    }
-                    successMessage.style.display = 'block';
+                    showStatus('✓ Η κράτησή σας ακυρώθηκε.', 'success');
+                    setTimeout(() => {
+                        // Optionally redirect to cancellation page
+                        // window.location.href = '/cancelled.html';
+                    }, 2000);
                 } else {
-                    throw new Error('Failed');
+                    throw new Error('Network response was not ok');
                 }
-            })
-            .catch(error => {
-                loading.style.display = 'none';
-                errorMessage.textContent = '✗ Something went wrong. Please try again.';
-                errorMessage.style.display = 'block';
-                confirmBtn.disabled = false;
-                cancelBtn.disabled = false;
-            });
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('✗ Σφάλμα επικοινωνίας. Παρακαλώ προσπαθήστε ξανά.', 'error');
+                disableButtons(false);
+            }
         }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
