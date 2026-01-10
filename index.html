@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Επιβεβαίωση Κράτησης Ταξί</title>
+    <title>Booking Confirmation</title>
     <style>
         * {
             margin: 0;
@@ -223,68 +223,68 @@
     <div class="container">
         <div class="header">
             <div class="taxi-icon">🚕</div>
-            <h1>Επιβεβαίωση Κράτησης</h1>
+            <h1>Booking confirmation</h1>
         </div>
 
         <div class="booking-details" id="viewMode">
             <div class="detail-row">
-                <div class="detail-label">Αριθμός Κράτησης</div>
+                <div class="detail-label">Booking ID</div>
                 <div class="detail-value" id="displayBookingId">-</div>
             </div>
             <div class="detail-row">
-                <div class="detail-label">Όνομα</div>
+                <div class="detail-label">First Name</div>
                 <div class="detail-value" id="displayName">-</div>
             </div>
             <div class="detail-row">
-                <div class="detail-label">Τηλέφωνο</div>
+                <div class="detail-label">Phone Number</div>
                 <div class="detail-value" id="displayPhone">-</div>
             </div>
             <div class="detail-row">
-                <div class="detail-label">Σημείο Παραλαβής</div>
+                <div class="detail-label">Pickup Location</div>
                 <div class="detail-value" id="displayPickup">-</div>
             </div>
             <div class="detail-row">
-                <div class="detail-label">Προορισμός</div>
+                <div class="detail-label">Destination</div>
                 <div class="detail-value" id="displayDropoff">-</div>
             </div>
         </div>
 
         <div class="edit-toggle">
-            <button onclick="toggleEditMode()">✏️ Επεξεργασία Στοιχείων</button>
+            <button onclick="toggleEditMode()">✏️ Edit Information</button>
         </div>
 
         <div class="editable-section hidden" id="editMode">
             <form id="bookingForm">
                 <div class="form-group">
-                    <label for="firstName">Όνομα *</label>
+                    <label for="firstName">First Name *</label>
                     <input type="text" id="firstName" name="firstName" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="lastName">Επώνυμο *</label>
+                    <label for="lastName">Last Name *</label>
                     <input type="text" id="lastName" name="lastName" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="phone">Τηλέφωνο *</label>
+                    <label for="phone">Phone Number *</label>
                     <input type="tel" id="phone" name="phone" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="pickup">Σημείο Παραλαβής *</label>
+                    <label for="pickup">Pickup Location *</label>
                     <textarea id="pickup" name="pickup" required></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="dropoff">Προορισμός *</label>
+                    <label for="dropoff">Destination *</label>
                     <textarea id="dropoff" name="dropoff" required></textarea>
                 </div>
             </form>
         </div>
 
         <div class="button-group">
-            <button class="btn-confirm" onclick="confirmBooking()">✓ Επιβεβαίωση</button>
-            <button class="btn-decline" onclick="declineBooking()">✗ Ακύρωση</button>
+            <button class="btn-confirm" onclick="confirmBooking()">✓ Confirm</button>
+            <button class="btn-decline" onclick="declineBooking()">✗ Cancel</button>
         </div>
 
         <div class="status-message" id="statusMessage"></div>
@@ -389,7 +389,7 @@
             }
 
             disableButtons(true);
-            showStatus('Επεξεργασία...', 'info');
+            showStatus('Processing...', 'info');
 
             try {
                 const response = await fetch(N8N_WEBHOOK_URL, {
@@ -404,7 +404,7 @@
                 });
 
                 if (response.ok) {
-                    showStatus('✓ Η κράτησή σας επιβεβαιώθηκε! Θα σας ενημερώσουμε σύντομα.', 'success');
+                    showStatus('✓ Your booking is confirmed! We will contact you shortly.', 'success');
                     setTimeout(() => {
                         // Optionally redirect to success page
                         // window.location.href = '/success.html';
@@ -414,19 +414,19 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showStatus('✗ Σφάλμα επικοινωνίας. Παρακαλώ προσπαθήστε ξανά.', 'error');
+                showStatus('✗ Comunication error. Please try again.', 'error');
                 disableButtons(false);
             }
         }
 
         // Decline booking
         async function declineBooking() {
-            if (!confirm('Είστε σίγουροι ότι θέλετε να ακυρώσετε την κράτηση;')) {
+            if (!confirm('Are you sure you want to cancel?')) {
                 return;
             }
 
             disableButtons(true);
-            showStatus('Ακύρωση...', 'info');
+            showStatus('cancel...', 'info');
 
             try {
                 const response = await fetch(N8N_WEBHOOK_URL, {
@@ -442,7 +442,7 @@
                 });
 
                 if (response.ok) {
-                    showStatus('✓ Η κράτησή σας ακυρώθηκε.', 'success');
+                    showStatus('✓ Your booking was canceled.', 'success');
                     setTimeout(() => {
                         // Optionally redirect to cancellation page
                         // window.location.href = '/cancelled.html';
@@ -452,7 +452,7 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showStatus('✗ Σφάλμα επικοινωνίας. Παρακαλώ προσπαθήστε ξανά.', 'error');
+                showStatus('✗ Conection error. Please try again.', 'error');
                 disableButtons(false);
             }
         }
